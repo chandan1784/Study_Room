@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.LoginActivity">
+
+    <!-- Image -->
+    <ImageView
+        android:id="@+id/imageViewCover"
+        android:layout_width="match_parent"
+        android:layout_height="310dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/app_background_image" />
+
+    <!-- Text in the center layout -->
+    <RelativeLayout
+        android:id="@+id/textLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:paddingHorizontal="16dp">
+
+        <TextView
+            android:id="@+id/textViewAppDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="India's #1 Library and\nReading Room's Seat Booking App"
+            android:textColor="#000000"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"/>
+
+    </RelativeLayout>
+
+    <!-- Separator Line with "Login or Signup" -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textLayout"
+        android:layout_marginTop="16dp">
+
+        <View
+            android:id="@+id/separatorLine"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#CCCCCC" />
+
+        <TextView
+            android:id="@+id/textViewLoginOrSignup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="-10dp"
+            android:background="#FFFFFF"
+            android:padding="8dp"
+            android:text="Login or Signup"
+            android:textColor="#000000" />
+
+    </RelativeLayout>
+
+
+    <!-- Login or Sign up layout -->
+    <RelativeLayout
+        android:id="@+id/loginWithPhoneNumberLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textLayout"
+        android:layout_marginTop="30dp"
+        android:padding="30dp">
+
+        <!-- Country Code -->
+        <com.hbb20.CountryCodePicker
+            android:id="@+id/login_countrycode"
+            android:layout_width="90dp"
+            android:layout_height="48dp"
+            android:layout_alignParentStart="true"
+            app:ccp_showFlag="true"
+            app:ccp_showNameCode="true"
+            app:ccp_autoDetectCountry="true"
+            app:ccp_showFullName="true"
+            android:background="@drawable/rounded_box"/>
+
+        <!-- Phone Number -->
+        <EditText
+            android:id="@+id/editTextPhoneNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/login_countrycode"
+            android:layout_marginStart="8dp"
+            android:inputType="phone"
+            android:hint="Enter phone number"
+            android:padding="12dp"
+            android:background="@drawable/rounded_box"/>
+
+        <!-- Continue Button -->
+        <Button
+            android:id="@+id/buttonContinue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/editTextPhoneNumber"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_button"
+            android:textSize="18sp"
+            android:text="Continue" />
+
+    </RelativeLayout>
+
+    <!-- Second Separator Line with "or sign in with" -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/loginWithPhoneNumberLayout"
+        android:layout_marginTop="16dp">
+
+        <View
+            android:id="@+id/separatorLine2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_centerVertical="true"
+            android:background="#CCCCCC" />
+
+        <TextView
+            android:id="@+id/textViewSignInWith"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="-10dp"
+            android:background="#FFFFFF"
+            android:padding="8dp"
+            android:text="or sign in with"
+            android:textColor="#000000" />
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>
