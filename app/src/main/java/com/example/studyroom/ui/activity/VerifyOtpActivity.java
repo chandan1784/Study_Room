@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.studyroom.R;
 import com.example.studyroom.api.UserApiUtil;
+import com.example.studyroom.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -30,7 +31,6 @@ public class VerifyOtpActivity extends AppCompatActivity {
     String otpVerificationId;
     FirebaseAuth mAuth;
 
-    UserApiUtil userApiUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,8 +102,12 @@ public class VerifyOtpActivity extends AppCompatActivity {
                             // User is authenticated.
                             String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                             String phoneNumber = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
+                            User user = new User(uid,phoneNumber);
+                            String userid=user.getUid();
+                            String userphonenumber= user.getPhoneNumber();
                             // Call the user utility to send the POST request to store the user profile in db
-                           //userApiUtil.sendPostRequest("your_api_endpoint", uid, phoneNumber);
+                            UserApiUtil userApiUtil = new UserApiUtil();
+                            userApiUtil.sendPostRequest("http://192.168.1.9:8080/api/users", user);
                             startActivity(new Intent(VerifyOtpActivity.this, HomepageActivity.class));
                             finish();
 
