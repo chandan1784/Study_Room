@@ -8,28 +8,39 @@ import com.example.studyroom.R;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import android.os.Bundle;
-import android.view.KeyEvent;
+import androidx.fragment.app.FragmentTransaction;
+
+import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.studyroom.api.ReverseGeocodingTask;
 import com.example.studyroom.ui.fragments.AboutFragment;
 import com.example.studyroom.ui.fragments.HomeFragment;
 import com.example.studyroom.ui.fragments.ManageprofileFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.Arrays;
+
 public class HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
     private ImageButton btnMenu;
+
+    FrameLayout searchLocation;
+
+    private boolean autocompleteInitialized = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,38 +60,20 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-       /* btnMenu = findViewById(R.id.btn_menu);
-        btnMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(GravityCompat.START);
-                } else {
-                    drawerLayout.openDrawer(GravityCompat.START);
-                }
-            }
-        });*/
+        /*
+        //For testing Reverse Geocoding API without using Autocomplete API
+        double latitude = 26.6830283;
+        double longitude = 85.66869009999999;
+        System.out.println("latitude is:" + latitude);
+        System.out.println("longitude is:" + longitude);
+        reverseGeocode(latitude,longitude);*/
 
-        // Handle search functionality
-        EditText searchView = findViewById(R.id.search_view);
-        searchView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    String query = v.getText().toString().trim();
-                    performSearch(query);
-                    return true;
-                }
-                return false;
-            }
-        });
+        // Initialize Autocomplete API
+       if (!autocompleteInitialized) {
+            initializeAutocompleteFragment();
+            autocompleteInitialized = true;
+        }
     }
-
-    private void performSearch(String query) {
-        // Implement your search logic here
-        Toast.makeText(this, "Searching for: " + query, Toast.LENGTH_SHORT).show();
-    }
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
@@ -112,4 +105,54 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     public void onPointerCaptureChanged(boolean hasCapture) {
         super.onPointerCaptureChanged(hasCapture);
     }
+
+    private void initializeAutocompleteFragment() {
+        // Initialize Places SDK
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), getString(R.string.API_KEY));
+        }
+        PlacesClient placesClient = Places.createClient(this);
+
+        // Add AutocompleteSupportFragment
+        AutocompleteSupportFragment autocompleteFragment = new AutocompleteSupportFragment();
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                // Handle the selected place
+                LatLng latLng = place.getLatLng();
+                double latitude = latLng.latitude;
+                double longitude = latLng.longitude;
+                System.out.println("latitude is:" + latitude);
+                System.out.println("longitude is:" + longitude);
+                reverseGeocode(latitude,longitude);
+                Toast.makeText(HomepageActivity.this, "Selected place: " + place.getName(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(@NonNull com.google.android.gms.common.api.Status status) {
+                // Handle the error
+                Toast.makeText(HomepageActivity.this, "Error: " + status.getStatusMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Begin the transaction
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.autocomplete_fragment_container, autocompleteFragment);
+        ft.commit();
+    }
+
+    private void reverseGeocode(double latitude, double longitude) {
+        ReverseGeocodingTask reverseGeocodingTask = new ReverseGeocodingTask(new ReverseGeocodingTask.ReverseGeocodeListener() {
+            @Override
+            public void onReverseGeocodeCompleted(String formattedAddress) {
+                // Update UI with the formatted address if needed
+                Log.d("Reverse Geocode", "Formatted Address: " + formattedAddress);
+                System.out.println("Formatted Address is :"+formattedAddress);
+            }
+        });
+        reverseGeocodingTask.execute(latitude, longitude);
+    }
+
+
 }
