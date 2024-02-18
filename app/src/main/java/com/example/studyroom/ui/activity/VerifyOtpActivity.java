@@ -149,7 +149,7 @@ public class VerifyOtpActivity extends AppCompatActivity {
                             String userphonenumber = user.getPhoneNumber();
                             // Call the user utility to send the POST request to store the user profile in db
                             UserApiUtil userApiUtil = new UserApiUtil();
-                            userApiUtil.sendPostRequest("http://localhost:8080/api/users", user);
+                            userApiUtil.sendPostRequest(user);
                             startActivity(new Intent(VerifyOtpActivity.this, HomepageActivity.class));
                             finish();
 
