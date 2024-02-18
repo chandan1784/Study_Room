@@ -13,24 +13,24 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ReverseGeocodingTask extends AsyncTask<Double, Void, String> {
+public class ReverseGeocodingTask extends AsyncTask<Void, Void, JSONObject> {
 
+    private String apiUrl;
     private ReverseGeocodeListener listener;
 
-    public ReverseGeocodingTask(ReverseGeocodeListener listener) {
+    public ReverseGeocodingTask(String apiUrl, ReverseGeocodeListener listener) {
+        this.apiUrl=apiUrl;
         this.listener = listener;
     }
 
     @Override
-    protected String doInBackground(Double... params) {
-        double latitude = params[0];
-        double longitude = params[1];
+    protected JSONObject doInBackground(Void... voids) {
 
         HttpURLConnection connection = null;
         BufferedReader reader = null;
-        String formattedAddress = null;
+        JSONObject addressJson = null;
         try {
-            URL url = new URL("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + latitude + "," + longitude + "&key=YOUR_API_KEY");
+            URL url = new URL(apiUrl);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.connect();
@@ -47,11 +47,11 @@ public class ReverseGeocodingTask extends AsyncTask<Double, Void, String> {
             Log.d("Reverse Geocode", "Response: " + response);
 
             JSONObject jsonObject = new JSONObject(response);
-            JSONArray results = jsonObject.getJSONArray("results");
+            addressJson = jsonObject;
+            JSONArray results = addressJson.getJSONArray("results");
             if (results.length() > 0) {
                 JSONObject result = results.getJSONObject(0);
-                formattedAddress = result.getString("formatted_address");
-                Log.d("Reverse Geocode", "Formatted Address: " + formattedAddress);
+                Log.d("Reverse Geocode", "addressJson: " + addressJson);
             }
         } catch (IOException | JSONException e) {
             e.printStackTrace();
@@ -68,17 +68,17 @@ public class ReverseGeocodingTask extends AsyncTask<Double, Void, String> {
             }
         }
 
-        return formattedAddress;
+        return addressJson;
     }
 
     @Override
-    protected void onPostExecute(String formattedAddress) {
+    protected void onPostExecute(JSONObject addressJson) {
         if (listener != null) {
-            listener.onReverseGeocodeCompleted(formattedAddress);
+            listener.onReverseGeocodeCompleted(addressJson);
         }
     }
 
     public interface ReverseGeocodeListener {
-        void onReverseGeocodeCompleted(String formattedAddress);
+        void onReverseGeocodeCompleted(JSONObject addressJson);
     }
 }

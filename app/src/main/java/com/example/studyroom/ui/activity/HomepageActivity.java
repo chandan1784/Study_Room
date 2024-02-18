@@ -13,13 +13,11 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.util.Log;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.studyroom.api.ReverseGeocodingTask;
+import com.example.studyroom.api.ReverseGeocodingUtil;
 import com.example.studyroom.ui.fragments.AboutFragment;
 import com.example.studyroom.ui.fragments.HomeFragment;
 import com.example.studyroom.ui.fragments.ManageprofileFragment;
@@ -31,15 +29,13 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.navigation.NavigationView;
 
+import org.json.JSONObject;
+
 import java.util.Arrays;
 
 public class HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
-    private ImageButton btnMenu;
-
-    FrameLayout searchLocation;
-
     private boolean autocompleteInitialized = false;
 
     @Override
@@ -60,13 +56,13 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        /*
         //For testing Reverse Geocoding API without using Autocomplete API
         double latitude = 26.6830283;
         double longitude = 85.66869009999999;
+        LatLng latLng = new LatLng(latitude,longitude);
         System.out.println("latitude is:" + latitude);
         System.out.println("longitude is:" + longitude);
-        reverseGeocode(latitude,longitude);*/
+        reverseGeocode(latLng);
 
         // Initialize Autocomplete API
        if (!autocompleteInitialized) {
@@ -125,7 +121,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 double longitude = latLng.longitude;
                 System.out.println("latitude is:" + latitude);
                 System.out.println("longitude is:" + longitude);
-                reverseGeocode(latitude,longitude);
+                //reverseGeocode(latitude,longitude); use when application will live
                 Toast.makeText(HomepageActivity.this, "Selected place: " + place.getName(), Toast.LENGTH_SHORT).show();
             }
 
@@ -142,16 +138,15 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         ft.commit();
     }
 
-    private void reverseGeocode(double latitude, double longitude) {
-        ReverseGeocodingTask reverseGeocodingTask = new ReverseGeocodingTask(new ReverseGeocodingTask.ReverseGeocodeListener() {
+    private void reverseGeocode(LatLng latLng) {
+        ReverseGeocodingUtil reverseGeocodingUtil = new ReverseGeocodingUtil();
+        reverseGeocodingUtil.getJson(latLng, new ReverseGeocodingTask.ReverseGeocodeListener() {
             @Override
-            public void onReverseGeocodeCompleted(String formattedAddress) {
-                // Update UI with the formatted address if needed
-                Log.d("Reverse Geocode", "Formatted Address: " + formattedAddress);
-                System.out.println("Formatted Address is :"+formattedAddress);
+            public void onReverseGeocodeCompleted(JSONObject addressJson) {
+                // Handle addressJson here
+                System.out.println("addressJson inside HomepageActivity :" + addressJson);
             }
         });
-        reverseGeocodingTask.execute(latitude, longitude);
     }
 
 
