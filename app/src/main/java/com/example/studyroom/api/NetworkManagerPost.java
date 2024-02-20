@@ -1,8 +1,6 @@
 package com.example.studyroom.api;
-
 import android.os.AsyncTask;
 
-import com.example.studyroom.model.ResponseApi;
 import com.example.studyroom.model.User;
 import com.google.gson.Gson;
 
@@ -14,19 +12,20 @@ import android.util.Log;
 
 import java.nio.charset.StandardCharsets;
 
-public class NetworkManager<T> extends AsyncTask<Void, Void, ResponseApi> {
+public class NetworkManagerPost<T> extends AsyncTask<Void, Void, Integer> {
 
-    private final String apiEndpointUrl;
-    private final T yourObject;
-    public NetworkManager(String apiEndpointUrl, T yourObject) {
-        this.apiEndpointUrl = apiEndpointUrl;
+    private String apiUrl;
+    private T yourObject;
+
+    public NetworkManagerPost(String apiUrl, T yourObject) {
+        this.apiUrl = apiUrl;
         this.yourObject = yourObject;
     }
+
     @Override
-    protected ResponseApi doInBackground(Void... voids) {
-        ResponseApi responseApi = new ResponseApi();
+    protected Integer doInBackground(Void... voids) {
         try {
-            URL url = new URL(apiEndpointUrl);
+            URL url = new URL(apiUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             // Set the request method to POST
@@ -46,26 +45,23 @@ public class NetworkManager<T> extends AsyncTask<Void, Void, ResponseApi> {
 
             // Get the response from the server
             int responseCode = connection.getResponseCode();
-            responseApi.setResponseCode(responseCode);
-
             System.out.println("Response Code: " + responseCode);
 
             // Handle the response as needed
 
             connection.disconnect();
-            return responseApi;
+            return responseCode;
         } catch (Exception e) {
             e.printStackTrace();
-            responseApi.setResponseCode(-1); // Return an error code or handle errors accordingly
-            return responseApi;
+            return -1; // Return an error code or handle errors accordingly
         }
     }
 
     @Override
-    protected void onPostExecute(ResponseApi responseApi) {
+    protected void onPostExecute(Integer responseCode) {
         // This method is called on the main thread after the background task completes
         // You can update UI or perform any post-execution tasks here
-        System.out.println("AsyncTask completed with Response Code: " + responseApi.getResponseCode());
-        Log.i(String.valueOf(responseApi.getResponseCode()), "response code is :");
+        System.out.println("AsyncTask completed with Response Code: " + responseCode);
+        Log.i(String.valueOf(responseCode), "response code is :");
     }
 }

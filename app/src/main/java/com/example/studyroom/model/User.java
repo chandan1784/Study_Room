@@ -1,6 +1,6 @@
 package com.example.studyroom.model;
 
-public class User {
+public class User{
     private String uid;
     private String phoneNumber;
 

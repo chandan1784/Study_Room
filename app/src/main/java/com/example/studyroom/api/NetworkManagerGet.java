@@ -1,10 +1,6 @@
 package com.example.studyroom.api;
-import android.os.AsyncTask;
-import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.os.AsyncTask;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,16 +9,22 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class ReverseGeocodingTask extends AsyncTask<Void, Void, JSONObject> {
+import android.util.Log;
 
-    private String apiUrl;
-    private ReverseGeocodeListener listener;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    public ReverseGeocodingTask(String apiUrl, ReverseGeocodeListener listener) {
-        this.apiUrl=apiUrl;
-        this.listener = listener;
+public class NetworkManagerGet<T extends NetworkManagerGet.NetworkListener> extends AsyncTask<Void, Void, JSONObject> {
+
+    private final String apiEndpointUrl;
+    private final T yourObject;
+
+    public NetworkManagerGet(String apiEndpointUrl, T yourObject ){
+        this.apiEndpointUrl = apiEndpointUrl;
+        this.yourObject = yourObject;
     }
 
+    //GET request
     @Override
     protected JSONObject doInBackground(Void... voids) {
 
@@ -30,7 +32,7 @@ public class ReverseGeocodingTask extends AsyncTask<Void, Void, JSONObject> {
         BufferedReader reader = null;
         JSONObject addressJson = null;
         try {
-            URL url = new URL(apiUrl);
+            URL url = new URL(apiEndpointUrl);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.connect();
@@ -46,13 +48,27 @@ public class ReverseGeocodingTask extends AsyncTask<Void, Void, JSONObject> {
             String response = builder.toString();
             Log.d("Reverse Geocode", "Response: " + response);
 
-            JSONObject jsonObject = new JSONObject(response);
-            addressJson = jsonObject;
-            JSONArray results = addressJson.getJSONArray("results");
+            // Check the Content-Type header
+            String contentType = connection.getContentType();
+
+            //if (response.startsWith("{")){
+            if (contentType != null && contentType.startsWith("application/json")) {
+                addressJson = new JSONObject(response);}
+            else {
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("message", response);
+                    addressJson=jsonObject;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            /*JSONArray results = addressJson.getJSONArray("results");
             if (results.length() > 0) {
                 JSONObject result = results.getJSONObject(0);
                 Log.d("Reverse Geocode", "addressJson: " + addressJson);
-            }
+            }*/
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         } finally {
@@ -72,13 +88,13 @@ public class ReverseGeocodingTask extends AsyncTask<Void, Void, JSONObject> {
     }
 
     @Override
-    protected void onPostExecute(JSONObject addressJson) {
-        if (listener != null) {
-            listener.onReverseGeocodeCompleted(addressJson);
+    protected void onPostExecute( JSONObject addressJson) {
+        if (yourObject != null) {
+            yourObject.onNetworkCompleted(addressJson);
         }
     }
 
-    public interface ReverseGeocodeListener {
-        void onReverseGeocodeCompleted(JSONObject addressJson);
+    public interface NetworkListener {
+        void onNetworkCompleted(JSONObject addressJson);
     }
 }

@@ -16,7 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.studyroom.api.ReverseGeocodingTask;
+import com.example.studyroom.api.NetworkManagerGet;
 import com.example.studyroom.api.ReverseGeocodingUtil;
 import com.example.studyroom.ui.fragments.AboutFragment;
 import com.example.studyroom.ui.fragments.HomeFragment;
@@ -65,7 +65,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         reverseGeocode(latLng);
 
         // Initialize Autocomplete API
-       if (!autocompleteInitialized) {
+        if (!autocompleteInitialized) {
             initializeAutocompleteFragment();
             autocompleteInitialized = true;
         }
@@ -121,7 +121,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 double longitude = latLng.longitude;
                 System.out.println("latitude is:" + latitude);
                 System.out.println("longitude is:" + longitude);
-                //reverseGeocode(latitude,longitude); use when application will live
+                //reverseGeocode(latLng); //use when application will live
                 Toast.makeText(HomepageActivity.this, "Selected place: " + place.getName(), Toast.LENGTH_SHORT).show();
             }
 
@@ -140,13 +140,12 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
     private void reverseGeocode(LatLng latLng) {
         ReverseGeocodingUtil reverseGeocodingUtil = new ReverseGeocodingUtil();
-        reverseGeocodingUtil.getJson(latLng, new ReverseGeocodingTask.ReverseGeocodeListener() {
+        reverseGeocodingUtil.getJson(latLng, new NetworkManagerGet.NetworkListener() {
             @Override
-            public void onReverseGeocodeCompleted(JSONObject addressJson) {
-                // Handle addressJson here
+            public void onNetworkCompleted(JSONObject addressJson) {
                 System.out.println("addressJson inside HomepageActivity :" + addressJson);
             }
-        });
+        } );
     }
 
 
