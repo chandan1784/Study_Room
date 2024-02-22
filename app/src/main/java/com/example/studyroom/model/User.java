@@ -1,6 +1,8 @@
 package com.example.studyroom.model;
 
-public class User{
+import com.example.studyroom.api.NetworkManager;
+
+public class User implements NetworkManager.NetworkListener {
     private String uid;
     private String phoneNumber;
 
@@ -24,5 +26,11 @@ public class User{
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+
+    @Override
+    public void onNetworkCompleted(ResponseApi responseApi) {
+
     }
 }

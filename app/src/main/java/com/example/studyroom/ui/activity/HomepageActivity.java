@@ -16,8 +16,9 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.studyroom.api.NetworkManagerGet;
+import com.example.studyroom.api.NetworkManager;
 import com.example.studyroom.api.ReverseGeocodingUtil;
+import com.example.studyroom.model.ResponseApi;
 import com.example.studyroom.ui.fragments.AboutFragment;
 import com.example.studyroom.ui.fragments.HomeFragment;
 import com.example.studyroom.ui.fragments.ManageprofileFragment;
@@ -28,9 +29,6 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.navigation.NavigationView;
-
-import org.json.JSONObject;
-
 import java.util.Arrays;
 
 public class HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -140,10 +138,10 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
     private void reverseGeocode(LatLng latLng) {
         ReverseGeocodingUtil reverseGeocodingUtil = new ReverseGeocodingUtil();
-        reverseGeocodingUtil.getJson(latLng, new NetworkManagerGet.NetworkListener() {
+        reverseGeocodingUtil.getJson(latLng, new NetworkManager.NetworkListener() {
             @Override
-            public void onNetworkCompleted(JSONObject addressJson) {
-                System.out.println("addressJson inside HomepageActivity :" + addressJson);
+            public void onNetworkCompleted(ResponseApi responseApi) {
+                System.out.println("addressJson inside HomepageActivity :" + responseApi.getResponseObject());
             }
         } );
     }

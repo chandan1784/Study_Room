@@ -2,10 +2,10 @@ package com.example.studyroom.api;
 
 import com.example.studyroom.model.User;
 
-public class UserApiUtil {
+public class UserApiUtil{
     public void sendPostRequest(User user) {
-        String apiEndpointUrl = "http://localhost:8080/api/users";
-        NetworkManagerPost<User> manager = new NetworkManagerPost<>(apiEndpointUrl, user);
+        String apiEndpointUrl = "http://localhost:port_no/api/users";
+        NetworkManager<User> manager = new NetworkManager<>(apiEndpointUrl, user,"POST");
         manager.execute();
     }
 }
