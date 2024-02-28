@@ -14,8 +14,11 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.studyroom.api.NearestLibrariesApiUtil;
 import com.example.studyroom.api.NetworkManager;
 import com.example.studyroom.api.ReverseGeocodingUtil;
 import com.example.studyroom.model.ResponseApi;
@@ -119,7 +122,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 double longitude = latLng.longitude;
                 System.out.println("latitude is:" + latitude);
                 System.out.println("longitude is:" + longitude);
-                //reverseGeocode(latLng); //use when application will live
+                //reverseGeocode(latLng);
                 Toast.makeText(HomepageActivity.this, "Selected place: " + place.getName(), Toast.LENGTH_SHORT).show();
             }
 
@@ -137,13 +140,30 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     }
 
     private void reverseGeocode(LatLng latLng) {
-        ReverseGeocodingUtil reverseGeocodingUtil = new ReverseGeocodingUtil();
+
+
+      /*  ReverseGeocodingUtil reverseGeocodingUtil = new ReverseGeocodingUtil();
         reverseGeocodingUtil.getJson(latLng, new NetworkManager.NetworkListener() {
             @Override
             public void onNetworkCompleted(ResponseApi responseApi) {
                 System.out.println("addressJson inside HomepageActivity :" + responseApi.getResponseObject());
             }
+        });*/
+
+
+        NearestLibrariesApiUtil nearestLibrariesApiUtil = new NearestLibrariesApiUtil();
+        nearestLibrariesApiUtil.getJson(latLng, new NetworkManager.NetworkListener() {
+            @Override
+            public void onNetworkCompleted(ResponseApi responseApi) {
+                System.out.println("addressJson inside HomepageActivity :" + responseApi.getResponseObject());
+                // Process the response to get list of libraries and display them
+                // Delegate population to LibraryManager
+               LibraryManager.populateLibraries(HomepageActivity.this, responseApi);
+
+            }
         } );
+
+
     }
 
 

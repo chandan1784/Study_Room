@@ -80,9 +80,11 @@
             android:layout_height="48dp"
             android:layout_alignParentStart="true"
             app:ccp_showFlag="true"
-            app:ccp_showNameCode="true"
-            app:ccp_autoDetectCountry="true"
-            app:ccp_showFullName="true"
+            app:ccp_showNameCode="false"
+            app:ccp_autoDetectCountry="false"
+            app:ccp_countryPreference="IN"
+            app:ccp_defaultNameCode="IN"
+            app:ccp_showPhoneCode="true"
             android:background="@drawable/rounded_box"/>
 
         <!-- Phone Number -->

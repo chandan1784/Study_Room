@@ -28,6 +28,7 @@ import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -73,7 +74,7 @@ public class VerifyOtpActivity extends AppCompatActivity {
                         signInWithPhoneAuthCredential(credential);
                     }
                     else {
-                        Toast.makeText(getApplicationContext(), "Verification ID is null or empty", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "OTP couldn't be sent, please resend", Toast.LENGTH_LONG).show();
                     }
                 }
 
@@ -101,7 +102,7 @@ public class VerifyOtpActivity extends AppCompatActivity {
                         .setActivity(this)
                         .setCallbacks(new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                     @Override
-                    public void onCodeSent(String verificationId, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                    public void onCodeSent(@NonNull String verificationId, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                         otpVerificationId = verificationId;
                         Log.i(otpVerificationId, "otp id is: ");
                         System.out.println("otp id is :" + otpVerificationId);
@@ -113,7 +114,7 @@ public class VerifyOtpActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+                    public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
                         signInWithPhoneAuthCredential(phoneAuthCredential);
                         setInProgress(false);
                     }
@@ -142,7 +143,7 @@ public class VerifyOtpActivity extends AppCompatActivity {
                         setInProgress(false);
                         if (task.isSuccessful()) {
                             // User is authenticated.
-                            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                            String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
                             String phoneNumber = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
                             User user = new User(uid, phoneNumber);
                             String userid = user.getUid();
