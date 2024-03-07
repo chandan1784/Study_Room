@@ -12,6 +12,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -22,6 +24,7 @@ import com.example.studyroom.api.NearestLibrariesApiUtil;
 import com.example.studyroom.api.NetworkManager;
 import com.example.studyroom.api.ReverseGeocodingUtil;
 import com.example.studyroom.model.ResponseApi;
+import com.example.studyroom.ui.adapter.LibraryRecyclerViewAdapter;
 import com.example.studyroom.ui.fragments.AboutFragment;
 import com.example.studyroom.ui.fragments.HomeFragment;
 import com.example.studyroom.ui.fragments.ManageprofileFragment;
@@ -39,10 +42,15 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private DrawerLayout drawerLayout;
     private boolean autocompleteInitialized = false;
 
+    private RecyclerView recyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homepage);
+
+        // Find RecyclerView in onCreate()
+        recyclerView = findViewById(R.id.recyclerView);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -158,7 +166,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 System.out.println("addressJson inside HomepageActivity :" + responseApi.getResponseObject());
                 // Process the response to get list of libraries and display them
                 // Delegate population to LibraryManager
-               LibraryManager.populateLibraries(HomepageActivity.this, responseApi);
+               LibraryManager.populateLibraries(HomepageActivity.this, recyclerView, responseApi);
 
             }
         } );

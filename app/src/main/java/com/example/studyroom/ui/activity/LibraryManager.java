@@ -2,11 +2,15 @@ package com.example.studyroom.ui.activity;
 
 import android.widget.ListView;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.studyroom.R;
 import com.example.studyroom.model.Address;
 import com.example.studyroom.model.Library;
 import com.example.studyroom.model.ResponseApi;
 import com.example.studyroom.ui.adapter.LibraryAdapter;
+import com.example.studyroom.ui.adapter.LibraryRecyclerViewAdapter;
 
 
 import org.json.JSONArray;
@@ -18,7 +22,7 @@ import java.util.List;
 
 public class LibraryManager {
 
-    protected static void populateLibraries(HomepageActivity homepageActivity, ResponseApi responseApi) {
+    protected static void populateLibraries(HomepageActivity homepageActivity, RecyclerView recyclerView, ResponseApi responseApi) {
         try {
             JSONArray results = responseApi.getResponseObject().getJSONArray("results");
             List<Library> libraries = new ArrayList<>();
@@ -53,10 +57,19 @@ public class LibraryManager {
                 libraries.add(library);
             }
 
-            // Now 'libraries' list contains all the elements from the JSON array
-            System.out.println("libraries:" + libraries);
 
-            // Populate the libraries in the list view
+            // Set LayoutManager for RecyclerView (e.g., LinearLayoutManager or GridLayoutManager)
+            recyclerView.setLayoutManager(new LinearLayoutManager(homepageActivity));
+
+            // Set LayoutManager for RecyclerView (e.g., LinearLayoutManager or GridLayoutManager)
+            recyclerView.setLayoutManager(new LinearLayoutManager(homepageActivity));
+            // Create adapter using LibraryRecyclerViewAdapter class
+            LibraryRecyclerViewAdapter adapter = new LibraryRecyclerViewAdapter(homepageActivity, libraries);
+            // Set adapter to RecyclerView
+            recyclerView.setAdapter(adapter);
+
+
+            /*// Populate the libraries in the list view
             // Get reference to ListView
             ListView listView = homepageActivity.findViewById(R.id.listView);
 
@@ -64,7 +77,7 @@ public class LibraryManager {
             LibraryAdapter adapter = new LibraryAdapter(homepageActivity, libraries);
 
             // Set adapter to ListView
-            listView.setAdapter(adapter);
+            listView.setAdapter(adapter);*/
 
         }
         catch (JSONException e) {
